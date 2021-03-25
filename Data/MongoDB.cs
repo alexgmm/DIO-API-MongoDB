@@ -11,20 +11,14 @@ namespace DIO.Mongo_API.Data
     {
         public IMongoDatabase DB { get; }
 
-        public MongoDB(IConfiguration configuration)
+        public MongoDB()
         {
-            try
-            {
-                string connectionString = System.Environment.GetEnvironmentVariable("MONGO_URI");
-                var settings = MongoClientSettings.FromConnectionString(connectionString);
-                var client = new MongoClient(settings);
-                DB = client.GetDatabase(configuration["NomeBanco"]);
-                MapClasses();
-            }
-            catch (Exception ex)
-            {
-                throw new MongoException("It was not possible to connect to MongoDB", ex);
-            }
+            DB = getMongoDatabase();
+            MapClasses();
+        }
+        
+        public static IMongoDatabase getMongoDatabase(){
+            return getMongoDBClient().GetDatabase("covidDB");
         }
 
         private void MapClasses()
@@ -39,6 +33,19 @@ namespace DIO.Mongo_API.Data
                     i.AutoMap();
                     i.SetIgnoreExtraElements(true);
                 });
+            }
+        }
+
+        public static MongoClient getMongoDBClient(){
+            try
+            {
+                string connectionString = System.Environment.GetEnvironmentVariable("MONGO_URI");
+                var settings = MongoClientSettings.FromConnectionString(connectionString);
+                return new MongoClient(settings);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("It was not possible to connect to MongoDB", ex);
             }
         }
     }

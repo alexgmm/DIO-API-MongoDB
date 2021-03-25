@@ -21,7 +21,7 @@ namespace DIO.Mongo_API.Controllers
         [HttpPost]
         public ActionResult SalvarCidade([FromBody] CidadeDto dto)
         {
-            var Cidade = new Cidade(dto.Nome, dto.Estado, dto.Populacao, dto.Latitude, dto.Longitude);
+            var Cidade = new Cidade(dto.Nome, dto.Estado, dto.Populacao, dto.Latitude, dto.Longitude, 0);
 
             _cidadesCollection.InsertOne(Cidade);
             
