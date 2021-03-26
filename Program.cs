@@ -10,6 +10,8 @@ namespace DIO.Mongo_API
         public static void Main(string[] args)
         {
             //CreateHostBuilder(args).Build().Run();
+            var icp = new InputCasesPopulator(10000);
+            icp.populate();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
