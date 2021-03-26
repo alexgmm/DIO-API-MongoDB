@@ -11,6 +11,13 @@ namespace DIO.Mongo_API.Data.Collections
             this.Sexo = sexo;
             this.Localizacao = new GeoJson2DGeographicCoordinates(longitude, latitude);
         }
+
+        public Infectado(DateTime dataNascimento, string sexo, GeoJson2DGeographicCoordinates localizacao)
+        {
+            this.DataNascimento = dataNascimento;
+            this.Sexo = sexo;
+            this.Localizacao = localizacao;
+        }
         
         public DateTime DataNascimento { get; set; }
         public string Sexo { get; set; }
