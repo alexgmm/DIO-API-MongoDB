@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DIO.Mongo_API.Data.Collections;
-using DIO.Mongo_API.Models;
 using MongoDB.Driver;
 
 /*
@@ -71,17 +70,20 @@ namespace DIO.Mongo_API.Data.DataGeneration
     }
 
     public class CollectionPopulator {
-        IMongoCollection<Cidade> _cidadesCollection;
 
-        public CollectionPopulator(){
+        public CollectionPopulator(){}
+
+        public static IMongoCollection<Cidade> GetCidadeCollection(){
             IMongoDatabase _db = Data.MongoDB.getMongoDBClient().GetDatabase("covidDB");
-            _cidadesCollection = _db.GetCollection<Cidade>("cidade");
+            return _db.GetCollection<Cidade>("cidade");
         }
 
-        public void populate(){
-           var cidades = ObjectGenerator.getObjects(CSVReader.readFromFile());
+        public static void populate(){
+            var Collection = GetCidadeCollection(); 
 
-           _cidadesCollection.InsertMany(cidades);
+            var cidades = ObjectGenerator.getObjects(CSVReader.readFromFile());
+
+            Collection.InsertMany(cidades);
         }
     }
 }

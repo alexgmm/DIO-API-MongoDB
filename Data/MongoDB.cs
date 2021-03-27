@@ -24,6 +24,7 @@ namespace DIO.Mongo_API.Data
         private void MapClasses()
         {
             var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+            
             ConventionRegistry.Register("camelCase", conventionPack, t => true);
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(Infectado)))

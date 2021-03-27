@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DIO.Mongo_API.Data.Collections;
+using MongoDB.Driver;
 using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace DIO.Mongo_API.Data.DataGeneration {
@@ -62,11 +63,11 @@ namespace DIO.Mongo_API.Data.DataGeneration {
             return DateTime.Parse($"{year}-{month}-{day}");
         }
     }
-    public class InputCaseGenerator{
+    public class InputCasesGenerator{
         private int population;
         private GeoJson2DGeographicCoordinates coordinates;
-        public InputCaseGenerator(){}
-        public InputCaseGenerator(Cidade c){
+        public InputCasesGenerator(){}
+        public InputCasesGenerator(Cidade c){
             this.population = c.Populacao;
             this.coordinates = c.Localizacao;
         }
@@ -104,11 +105,24 @@ namespace DIO.Mongo_API.Data.DataGeneration {
             }
         }
         private int getNumberOfCasesForPopulation(){
-            double a = 2.841817E-9, e = 1.232042;
+            double factor;
 
-            int number = (int)Math.Floor(a*population*Math.Pow(population, e));
+            if(population < 50000)
+                factor = 0.00005;
+            else if(population < 200000)
+                factor = 0.0001;
+            else if(population < 500000)
+                factor = 0.0003;
+            else if(population < 1000000)
+                factor = 0.0008;
+            else if(population < 3000000)
+                factor = 0.003;
+            else if(population < 8000000)
+                factor = 0.01;
+            else 
+                factor = 0.06;
 
-            return number;
+            return (int)Math.Floor(factor * population);
         }
         private List<int> getAgesForPopulation(){
             var ages = new List<int>();
@@ -147,7 +161,7 @@ namespace DIO.Mongo_API.Data.DataGeneration {
 
             return ages;
         }
-        public List<Infectado> populate(){
+        public List<Infectado> generateInputCases(){
             var inputs = new List<Infectado>();
 
             var ages = getAgesForPopulation();
@@ -156,7 +170,7 @@ namespace DIO.Mongo_API.Data.DataGeneration {
                 var dateGenerator = new DateGenerator(a);
                 var birthDate = dateGenerator.getRandomDate();
 
-                string sex = new Random().Next(0,1) == 0 ? "M" : "F";
+                string sex = new Random().Next(0,2) == 0 ? "M" : "F";
 
                 var input = new Infectado(birthDate, sex, coordinates);
 
@@ -164,6 +178,46 @@ namespace DIO.Mongo_API.Data.DataGeneration {
             }
 
             return inputs;
+        }
+    }
+
+    public class InputCasesPopulator {
+        public InputCasesPopulator(){}
+        private static List<Cidade> GetCidades(){
+            IMongoDatabase _db = Data.MongoDB.getMongoDBClient().GetDatabase("covidDB");
+
+            IMongoCollection<Cidade> _cidadesCollection;
+
+            _cidadesCollection = _db.GetCollection<Cidade>("cidade");
+
+            return _cidadesCollection.Find(c => true).ToList<Cidade>();
+        }
+        private static IMongoCollection<Infectado> GetCollection(){
+            IMongoDatabase _db = Data.MongoDB.getMongoDBClient().GetDatabase("covidDB");
+            return _db.GetCollection<Infectado>("infectado");
+        }
+        private static void UpdateCount(Cidade cidade, int count){
+            var filter = Builders<Cidade>.Filter.Eq("Localizacao", cidade.Localizacao);
+            var update = Builders<Cidade>.Update.Set("Contagem", count);
+
+            var cidadeColection = CollectionPopulator.GetCidadeCollection();
+            cidadeColection.UpdateOne(filter, update);
+        }
+        public static void Populate(){
+            var cidades = GetCidades();
+
+            var Collection = GetCollection();
+
+            foreach(var c in cidades){
+                var inputCasesGenerator = new InputCasesGenerator(c);
+
+                var cases = inputCasesGenerator.generateInputCases();
+                
+                if(cases.Count > 0){
+                    Collection.InsertMany(cases);
+                    UpdateCount(c, cases.Count);
+                }
+            }
         }
     }
 }

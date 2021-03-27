@@ -1,5 +1,6 @@
 using System;
 using MongoDB.Driver.GeoJsonObjectModel;
+using MongoDB.Bson;
 
 namespace DIO.Mongo_API.Data.Collections
 {
@@ -12,7 +13,7 @@ namespace DIO.Mongo_API.Data.Collections
             this.Contagem = c;
             this.Localizacao = new GeoJson2DGeographicCoordinates(lg, lt);
         }
-       
+        public ObjectId Id { get; set; }
         public string Nome {get; set;}
         public string Estado {get; set;}
         public int Populacao {get; set;}
