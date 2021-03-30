@@ -39,3 +39,4 @@
 /home/hal/projetos/dotnet_workspace/DIO/DIO.Mongo-API/obj/Debug/net5.0/ref/DIO.Mongo-API.dll
 /home/hal/projetos/dotnet_workspace/DIO/DIO.Mongo-API/obj/Debug/net5.0/DIO.Mongo-API.pdb
 /home/hal/projetos/dotnet_workspace/DIO/DIO.Mongo-API/obj/Debug/net5.0/DIO.Mongo-API.genruntimeconfig.cache
+/home/hal/projetos/dotnet_workspace/DIO/DIO.Mongo-API/bin/Debug/net5.0/MongoDB.Driver.Legacy.dll

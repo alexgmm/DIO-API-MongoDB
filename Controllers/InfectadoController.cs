@@ -1,7 +1,10 @@
 ﻿using DIO.Mongo_API.Data.Collections;
+using DIO.Mongo_API.Data.DataGeneration;
 using DIO.Mongo_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using System.Linq;
+using System;
 
 namespace DIO.Mongo_API.Controllers
 {
@@ -18,14 +21,30 @@ namespace DIO.Mongo_API.Controllers
             _infectadosCollection = _mongoDB.DB.GetCollection<Infectado>(typeof(Infectado).Name.ToLower());
         }
 
+        private void ObterCidadeMaisProxima(Infectado infectado){
+            var collection = CollectionPopulator.GetCidadeCollection();
+
+            var point = infectado.Localizacao;
+            int maxDistance = 1000000;
+
+            IAsyncCursor<Cidade> cursor = collection.FindSync(new FilterDefinitionBuilder<Cidade>().Near(x => x.Localizacao, point, maxDistance: maxDistance));
+            var hasNeighbors = cursor.Any();
+            var cidades = cursor.ToList<Cidade>();
+            foreach(var c in cidades) Console.WriteLine(c);
+        }
         [HttpPost]
         public ActionResult SalvarInfectado([FromBody] InfectadoDto dto)
         {
             var infectado = new Infectado(dto.DataNascimento, dto.Sexo, dto.Latitude, dto.Longitude);
 
-            _infectadosCollection.InsertOne(infectado);
-            
-            return StatusCode(201, "Infectado adicionado com sucesso");
+            ObterCidadeMaisProxima(infectado);
+                
+            try {
+                _infectadosCollection.InsertOne(infectado);
+                return StatusCode(201, "Casp adicionado com sucesso");
+            }catch{
+                return StatusCode(500, "Erro ao adicionar dados");
+            }
         }
 
         [HttpGet]

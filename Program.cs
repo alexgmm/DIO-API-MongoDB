@@ -1,7 +1,5 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using DIO.Mongo_API.Data.DataGeneration;
 
 namespace DIO.Mongo_API
 {
@@ -9,12 +7,8 @@ namespace DIO.Mongo_API
     {
         public static void Main(string[] args)
         {
-            //CreateHostBuilder(args).Build().Run();
-
-            InputCasesPopulator.Populate();
+            CreateHostBuilder(args).Build().Run();
         }
-
-
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)

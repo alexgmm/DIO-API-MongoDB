@@ -69,7 +69,7 @@ namespace DIO.Mongo_API.Data.DataGeneration {
         public InputCasesGenerator(){}
         public InputCasesGenerator(Cidade c){
             this.population = c.Populacao;
-            this.coordinates = c.Localizacao;
+            this.coordinates = c.Localizacao.Coordinates;
         }
         private int[] getCasesPerAgeGroup(int confirmedCases){
             int[] cases = new int[6];

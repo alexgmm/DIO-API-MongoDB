@@ -9,18 +9,18 @@ namespace DIO.Mongo_API.Data.Collections
         {
             this.DataNascimento = dataNascimento;
             this.Sexo = sexo;
-            this.Localizacao = new GeoJson2DGeographicCoordinates(longitude, latitude);
+            this.Localizacao = GeoJson.Point(new GeoJson2DGeographicCoordinates(longitude, latitude));
         }
 
         public Infectado(DateTime dataNascimento, string sexo, GeoJson2DGeographicCoordinates localizacao)
         {
             this.DataNascimento = dataNascimento;
             this.Sexo = sexo;
-            this.Localizacao = localizacao;
+            this.Localizacao = GeoJson.Point(localizacao);
         }
         
         public DateTime DataNascimento { get; set; }
         public string Sexo { get; set; }
-        public GeoJson2DGeographicCoordinates Localizacao { get; set; }
+        public GeoJsonPoint<GeoJson2DGeographicCoordinates> Localizacao { get; set; }
     }
 }

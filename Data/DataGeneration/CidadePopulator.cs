@@ -78,7 +78,7 @@ namespace DIO.Mongo_API.Data.DataGeneration
             return _db.GetCollection<Cidade>("cidade");
         }
 
-        public static void populate(){
+        public static void Populate(){
             var Collection = GetCidadeCollection(); 
 
             var cidades = ObjectGenerator.getObjects(CSVReader.readFromFile());
